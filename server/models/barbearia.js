@@ -18,8 +18,8 @@ const UserSchema = new mongoose.Schema({
       cep: {type: Number},
       numero: {type: Number}
     },
-    startTime: {type: Number},
-    finalTime: {type: Number}
+    startTime: {type: String},
+    finalTime: {type: String}
 })
 
 const BarberModel = mongoose.model("barbearia", UserSchema)

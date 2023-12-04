@@ -8,6 +8,9 @@ const path = require('path')
 const UserModel = require('./server/models/user')
 const UserBarbearia = require('./server/models/barbearia')
 const Images = require('./server/models/images')
+const AgendamentoModel = require('./server/models/agendamento')
+const ImagesUser = require('./server/models/imagesUser')
+const Capa = require('./server/models/capa')
 
 const app = express()
 app.use(cors())
@@ -48,7 +51,7 @@ app.delete('/deleteUser/:id', (req, res) => {
     UserModel.findByIdAndDelete({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
 })
 
-//Barbearias
+// Images Barber
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -81,6 +84,39 @@ app.get('/getImages/:id', (req, res) => {
 
     Images.findById({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
 })
+
+// Images User
+
+app.post("/uploadUser", upload.single('file'), (req, res) => {
+    ImagesUser.create({ imageUser: req.file.filename }).then(resposta => res.json({ error: false, resposta })).catch(err => res.json({ error: true, message: err.message }))
+})
+
+app.get('/getImagesUser', (req, res) => {
+    ImagesUser.find({}).then(users => res.json({ error: false, users })).catch(err => res.json({ error: true, message: err.message }))
+})
+
+app.get('/getImagesUser/:id', (req, res) => {
+    const id = req.params.id;
+
+    ImagesUser.findById({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+// Capa Barbearia
+app.post("/uploadCapa", upload.single('file'), (req, res) => {
+    Capa.create({ capa: req.file.filename }).then(resposta => res.json({ error: false, resposta })).catch(err => res.json({ error: true, message: err.message }))
+})
+
+app.get('/getImagesCapa', (req, res) => {
+    Capa.find({}).then(users => res.json({ error: false, users })).catch(err => res.json({ error: true, message: err.message }))
+})
+
+app.get('/getImagesCapa/:id', (req, res) => {
+    const id = req.params.id;
+
+    Capa.findById({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+// Barbers
 
 app.get('/barbearias', (req, res) => {
     UserBarbearia.find({}).then(users => res.json({ error: false, users })).catch(err => res.json({ error: true, message: err.message }))
@@ -115,6 +151,40 @@ app.delete('/deleteBarbearia/:id', (req, res) => {
 
     UserBarbearia.findByIdAndDelete({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
 })
+
+// Agendamentos 
+
+app.get('/getAgendamento', (req, res) => {
+    AgendamentoModel.find({}).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+app.get('/AgendamentoModel/:id', (req, res) => {
+    const id = req.params.id;
+
+    AgendamentoModel.findById({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+app.post("/createAgendamento", (req, res) => {
+    AgendamentoModel.create(req.body).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+app.put("/updateAgendamento/:id", (req, res) => {
+    const id = req.params.id;
+
+    AgendamentoModel.findByIdAndUpdate({ _id: id }, {
+        serviceName: req.body.serviceName,
+        servicePrice: req.body.servicePrice,
+        dia: req.body.dia,
+        horario: req.body.horario
+    }).then(users => res.json(users)).catch(err => res.json(err))
+})
+
+app.delete('/deleteAgendamento/:id', (req, res) => {
+    const id = req.params.id;
+
+    AgendamentoModel.findByIdAndDelete({ _id: id }).then(users => res.json(users)).catch(err => res.json(err))
+})
+
 
 app.listen(3001, () => {
     console.log("server is running")
